@@ -10,8 +10,10 @@ import eggbot_scan
 import sys
 import os
 
-logger = logging.getLogger('eggbot')
-#logger.setLevel(logging.DEBUG)
+
+logging.basicConfig()
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 UMSTEP = 200
 platform = sys.platform.lower()
 
@@ -19,14 +21,14 @@ HOME = os.getenv( 'HOME' )
 if platform == 'win32':
 	HOME = os.path.realpath( "C:/" )  # Arguably, this should be %APPDATA% or %TEMP%
 
-class easyEBB:
-    def __init__( self, resolution = (1280,960), sizeMM = 10, stepMode = 5 ):
+class EasyEBB:
+    def __init__( self, resolution = [1280,960], sizeMM = 10, stepMode = 5 ):
         """
         Initializes an easyEBB object
         """
         self.actualSerialPort = ''
-        self.openSerial()
-
+        self.connected = self.openSerial()
+        self.sizeMM = sizeMM
         ### Get size of window in mm and convert to um
         self.colUM = sizeMM * 1000. #length of cols (x) in um
 #        self.rowUM = sizeMM[1] * 1000. #length of rows (y) in um
@@ -75,11 +77,10 @@ class easyEBB:
         self.colPixStep = self.stepUM * self.colPixSpacing
         self.rowPixStep = self.stepUM * self.rowPixSpacing
         
-        logger.info('1 step is ? pixels:\tcol: %0.3f\trow: %0.3f' % 
-                    (self.colPixStep, self.rowPixStep))
+        logger.info('One step is %0.3f pixels' %  (self.colPixStep) )
         logger.info('Current stepMode value: %0.4f, EBB stepMode key: %d' % 
                     (self.stepOpts[self.stepMode], self.stepMode ))
-        logger.info('1 step = ? um:  %0.4f' % self.stepUM )
+        logger.info('1 step = %0.4f um' % self.stepUM )
 
 
 
@@ -107,15 +108,15 @@ class easyEBB:
          #logger.warning('Centering Worm')
          xInstPix = self.colMid - colWormPix
          yInstPix = self.rowMid - rowWormPix
-
-         
-         
+                  
          rowSteps = int(yInstPix / self.colPixStep)
          colSteps = int(xInstPix / self.rowPixStep)
          
-         logger.warning('From (col,row): (%d, %d) to (%d,%d) steps: (%d, %d)' % (colWormPix, rowWormPix,  self.colMid, self.rowMid, colSteps, -rowSteps))
-         self.move( duration, colSteps, -rowSteps) #adjusted for orientation
-
+         logger.warning('From (col,row): (%d, %d) to center | steps: (%d, %d)' % (colWormPix, rowWormPix, colSteps, -rowSteps))
+         #send x, y separately
+         self.move( duration, colSteps, 0) 
+         self.move( duration, 0, -rowSteps)#adjusted for orientation
+         return colSteps, -rowSteps
         
     def move(self, duration, xstep, ystep):
         """
@@ -128,7 +129,8 @@ class easyEBB:
         """ 
               
         #self.enableMotors()
-        self.doCommand('SM,%d,%d,%d\r' %(duration, xstep, ystep))
+        cmd = ('SM,%d,%d,%d\r' %(duration, xstep, ystep))
+        self.doCommand(cmd)
         #self.disableMotors()
         logger.info('Command sent: move x:%d y:%d in steps' % (xstep, ystep))
         
@@ -140,20 +142,28 @@ class easyEBB:
         logging.info('Opening Serial Connection')
         self.serialPort = self.getSerialPort()
         if self.serialPort == None:
-            logging.exception( "Servos: Unable to find serial port")
-            sys.exit(0)
+            #logger.exception( "Unable to find serial port")
+            raise serial.SerialException('Unable to find serial port') 
+            return False
+        else: 
+            logger.warning("Motors connected")
+            return True
+        
+#        sys.exit(0)
         
     def closeSerial( self ):
         """
         Closes the serial connection to the EiBotBoard
         """
         logging.info('Closing Serial Connection')
+        self.disableMotors()
         try: 
             if self.serialPort:
                 self.serialPort.flush()
                 self.serialPort.close()
         finally:
             self.serialPort = None
+            self.connected = False
             return
 
     def getSerialPort( self ):
@@ -205,14 +215,14 @@ class easyEBB:
             serialPort.close()
         
         except serial.SerialException as e:
-            logger.exception(str(e))
-            
+            #logger.exception(str(e))
+            logger.debug(str(e))
 
         return None
 
     def doCommand(self, cmd):
         """
-        Sends a string command to EiBotBoard
+        Sends a string command to EiBotBoard in its own thread!!!
         """
         try:
             self.serialPort.write( cmd ) 
@@ -231,12 +241,15 @@ class easyEBB:
         Disables both motors on EiBotBoard
         """
         logger.info('Servos Disabled')
-        self.doCommand('EM,0,0\r')
-    
+        cmd = 'EM,0,0\r'
+        self.doCommand(cmd)
+
     def enableMotors(self):
         """
         Disables both motors on EiBotBoard
         """
         logger.info('Servos Enabled')
-        self.doCommand('EM,%d,%d\r' % ( self.stepMode, self.stepMode ))
+        cmd = 'EM,1,1\r'
+        self.doCommand(cmd)
+
         

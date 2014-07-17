@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>1ec4712a-5064-4f7a-858f-0900af7de819</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>configUI.py</StartupFile>
+    <StartupFile>main.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -22,14 +22,16 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="configUI.py" />
+    <Compile Include="calibrationUI.py" />
     <Compile Include="easyEBB.py" />
     <Compile Include="eggbot_scan.py" />
     <Compile Include="eggbot_scanlinux.py" />
     <Compile Include="eggbot_scanosx.py" />
     <Compile Include="eggbot_scanposix.py" />
     <Compile Include="eggbot_scanwin32.py" />
+    <Compile Include="main.py" />
     <Compile Include="managers.py" />
+    <Compile Include="utils.py" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
 </Project>

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "configUI", "configUI\configUI.pyproj", "{1EC4712A-5064-4F7A-858F-0900AF7DE819}"
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "calibrationUI", "NemPyCalibration\calibrationUI.pyproj", "{1EC4712A-5064-4F7A-858F-0900AF7DE819}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
