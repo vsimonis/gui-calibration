@@ -90,6 +90,6 @@ class Point ( object ):
     def draw ( self, img, color ):
         if self.icol is None or self.irow is None:
             return
-        cv2.circle( img, (int(self.icol), int(self.irow)), 3 , colors[color], -1 )
+        cv2.circle( img, (int(self.icol), int(self.irow)), 6 , colors[color], -1 )
         return img
 

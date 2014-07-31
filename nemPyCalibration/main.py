@@ -46,7 +46,7 @@ class Gui(QtWidgets.QMainWindow):
         self.ui.setupUi(self)
 
         self._cap = None
-       
+        self.ebb = None
         ## Stuff you can change in the UI
         self.width = None
         self.idealRes = [1280, 960]
@@ -91,6 +91,7 @@ class Gui(QtWidgets.QMainWindow):
         self.ui.scalingSlider.valueChanged[int].connect( self.setMultFactor )
         self.ui.scaling.setText( 'Motor scaling is %d' % self.ui.scalingSlider.value() ) 
         self.ui.sourceCombo.activated[int].connect( self.setSource )
+        self.ui.comboBox.activated.connect ( self.resolutionSelect )
                 
 
 
@@ -101,6 +102,10 @@ class Gui(QtWidgets.QMainWindow):
         self.setAble('save', False)
     
     def setSource ( self, value ):
+        if self._cap:
+            if self._cap._capture.isOpened(): #ugly access to VideoCapture object from managers
+                self._cap._capture.release()
+        
         self._cap = CaptureManager( cv2.VideoCapture(int(value)) )
         #self.indWindow = cv2.namedWindow("Camera Display")
         self.showImage = True
@@ -108,12 +113,28 @@ class Gui(QtWidgets.QMainWindow):
         self.p = Point(200,300)
         self.c = Point(self.actualRes[0] // 2, self.actualRes[1] // 2)
         self.setAble('settings', True)
-    
+    def resolutionSelect ( self ):
+        # Get desired resolution from the user: 
+        self.idealRes = self.ui.comboBox.currentText().split('x')
+        self.idealRes = map(lambda x: int(x), self.idealRes)
+
+        logger.debug("User input res: %d %d" % (self.idealRes[0], self.idealRes[1])  )
+            
+        # Attempt to change the resolution:
+        self._cap.setProp('width', self.idealRes[0])
+        self._cap.setProp('height', self.idealRes[1])
+        self.actualRes = self._cap.getResolution()
+        # Something went wrong with resolution assignment -- possible need for shut down if resolution can't even be queried
+        self.c = Point(self.actualRes[0] // 2, self.actualRes[1] // 2)
+        if not ( self.actualRes == self.idealRes ):
+            QtWidgets.QMessageBox.information( self, "Resolution",
+                                              "That resolution isn't supported by the camera. Instead, your actual resolution is: %d x %d" % (self.actualRes[0], self.actualRes[1] ) )
+
     def save( self ):
         c = os.path.dirname(os.getcwd())
         cc = os.path.dirname(c)
         f = open( ("%s\\config.txt" % cc) , "w")
-        f.write('%d|%d|%s\n' % ( self.actualRes[0], self.actualRes[1], self.ui.widthLine.text()) )
+        f.write('%d|%d|%s|%s\n' % ( self.actualRes[0], self.actualRes[1], self.ui.widthLine.text(), self.ui.sourceCombo.currentText() ))
         f.close()
         
          
@@ -121,7 +142,7 @@ class Gui(QtWidgets.QMainWindow):
 
     def setMultFactor ( self, value ):
         self.multFactor = value
-        self.ui.scaling.setText( 'Motor step scaling is %d' % value)
+        self.ui.scaling.setText( 'Step scaling is %d' % value)
     
     def setAble( self, group, ability ):
         groups = { 'motors' : [self.ui.buttonLeft, 
@@ -171,17 +192,17 @@ class Gui(QtWidgets.QMainWindow):
 
     def reset ( self ):
         
-        self.ebb.move(100, -self.colSteps, -self.rowSteps)
+        self.ebb.move(300, -self.colSteps, -self.rowSteps)
         if self.ebb.connected:
             self.ebb.closeSerial()
 
         self.setAble('settings', True)
 
     def center ( self ):
-        th = threading.Thread(target  = self.ebb.move , args = (100,200,300) )
+        #th = threading.Thread(target  = self.ebb.move , args = (100,200,300) )
         try:
             #partial(self.ebb.move, dir[direction]) 
-            self.colSteps, self.rowSteps = th.start()
+            self.colSteps, self.rowSteps = self.ebb.centerWorm(300,200,300)
             #th.join()
         except Exception as e:
             logger.exception( str(e) )
@@ -200,22 +221,7 @@ class Gui(QtWidgets.QMainWindow):
                 return
        
         if self.ui.widthLine.text() and self.ui.comboBox.currentText():
-            # Get desired resolution from the user: 
-            self.idealRes = self.ui.comboBox.currentText().split('x')
-            self.idealRes = map(lambda x: int(x), self.idealRes)
-
-            logger.debug("User input res: %d %d" % (self.idealRes[0], self.idealRes[1])  )
-            
-            # Attempt to change the resolution: 
-            self._cap.setProp('width', self.idealRes[0])
-            self._cap.setProp('height', self.idealRes[1]) 
-            self.actualRes = self._cap.getResolution()
-            # Something went wrong with resolution assignment -- possible need for shut down if resolution can't even be queried
-            self.c = Point(self.actualRes[0] // 2, self.actualRes[1] // 2)
-            if not ( self.actualRes == self.idealRes ): 
-                QtWidgets.QMessageBox.information( self, "Resolution",
-                                                  "That resolution isn't supported by the camera. Instead, your actual resolution is: %d x %d" % (self.actualRes[0], self.actualRes[1] ) )
-
+            self.resolutionSelect()
             # Instantiate motors    
             try:
                 self.ebb = EasyEBB( resolution = self.actualRes, sizeMM = float(self.ui.widthLine.text() ) )
@@ -236,6 +242,8 @@ class Gui(QtWidgets.QMainWindow):
 
     def closeEvent ( self, event):
         logger.debug("closing")
+        if self._cap._capture.isOpened():
+            self._cap._capture.release()
         #if self._cap:
         #    cv2.destroyWindow("Camera Display")
         #    cv2.destroyAllWindows()
@@ -264,8 +272,8 @@ class Gui(QtWidgets.QMainWindow):
             if self.color:
                 try:
                     self.currentFrame = cv2.cvtColor(self.currentFrame, cv2.COLOR_BGR2GRAY)
-                    self.currentFrame = self.p.draw(self.currentFrame, 'white-1')
-                    self.currentFrame = self.c.draw(self.currentFrame, 'white-1')
+                    self.currentFrame = self.p.draw(self.currentFrame, 'gray-1')
+                    self.currentFrame = self.c.draw(self.currentFrame, 'gray-1')
                     self.ui.videoFrame.setPixmap(self._cap.convertFrame(self.currentFrame))
                     #cv2.imshow( "Camera Display",self.currentFrame)
                 except TypeError:
@@ -274,18 +282,18 @@ class Gui(QtWidgets.QMainWindow):
                     self._cap.exitFrame()
             self._cap.exitFrame()
         
-    def keyPressEvent( self, e ):
+    #def keyPressEvent( self, e ):
         #logger.debug('\tPressed\t%d' % e.key() )
         
-        options = {
-                   QtCore.Qt.Key_Escape : self.close(),
-                   QtCore.Qt.Key_Left : self.motors( 'left' ),
-                   QtCore.Qt.Key_Right : self.motors( 'right' ),
-                   QtCore.Qt.Key_Up : self.motors( 'up' ),
-                   QtCore.Qt.Key_Down : self.motors( 'down' ) 
-               }
+        #options = {
+        #           QtCore.Qt.Key_Escape : self.close(),
+        #           QtCore.Qt.Key_Left : self.motors( 'left' ),
+        #           QtCore.Qt.Key_Right : self.motors( 'right' ),
+        #           QtCore.Qt.Key_Up : self.motors( 'up' ),
+        #           QtCore.Qt.Key_Down : self.motors( 'down' ) 
+        #       }
         #logging.debug( str(options[e.key()]) )
-        options[e.key()]
+        #options[e.key()]
         
         
 
