@@ -18,19 +18,6 @@ logging.basicConfig()
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
-class ValEventFilter(QtCore.QObject):
-    def eventFilter( self, receiver, event):
-        keys_filter = [ QtCore.Qt.Key_Left, QtCore.Qt.Key_Right, QtCore.Qt.Key_Up, QtCore.Qt.Key_Down ]
-        keys_dict =  {
-                     QtCore.Qt.Key_Left : g.motors( 'left' ),
-                     QtCore.Qt.Key_Right : g.motors( 'right' ),
-                     QtCore.Qt.Key_Up : g.motors( 'up' ),
-                     QtCore.Qt.Key_Down : g.motors( 'down' )
-                     }
-        if (event.type() == QtCore.QEvent.KeyPress) and event.key() in keys_filter:
-            keys_dict[event.key()]
-        else:
-            return super(ValEventFilter, self).eventFilter( receiver, event )
 
 class Gui(QtWidgets.QMainWindow):
 
@@ -275,6 +262,7 @@ class Gui(QtWidgets.QMainWindow):
                     self.currentFrame = self.p.draw(self.currentFrame, 'gray-1')
                     self.currentFrame = self.c.draw(self.currentFrame, 'gray-1')
                     self.ui.videoFrame.setPixmap(self._cap.convertFrame(self.currentFrame))
+                    self.ui.videoFrame.setScaledContents(True)
                     #cv2.imshow( "Camera Display",self.currentFrame)
                 except TypeError:
                     logger.exception("No Frame")

@@ -6,15 +6,9 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1772</width>
-    <height>1153</height>
+    <width>1000</width>
+    <height>650</height>
    </rect>
-  </property>
-  <property name="minimumSize">
-   <size>
-    <width>1400</width>
-    <height>1100</height>
-   </size>
   </property>
   <property name="font">
    <font>
@@ -27,51 +21,22 @@
    <string>NemPy Tracker Calibration</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="videoFrame">
+   <widget class="QWidget" name="controls" native="true">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>820</x>
       <y>10</y>
-      <width>1280</width>
-      <height>1080</height>
+      <width>170</width>
+      <height>497</height>
      </rect>
     </property>
-    <property name="maximumSize">
-     <size>
-      <width>1280</width>
-      <height>1080</height>
-     </size>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
     </property>
-    <property name="text">
-     <string>Select source to see video displayed here</string>
-    </property>
-   </widget>
-   <widget class="QWidget" name="layoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>1320</x>
-      <y>50</y>
-      <width>593</width>
-      <height>923</height>
-     </rect>
-    </property>
-    <layout class="QGridLayout" name="gridLayout">
-     <property name="sizeConstraint">
-      <enum>QLayout::SetDefaultConstraint</enum>
-     </property>
-     <item row="3" column="0" colspan="3">
-      <widget class="QLabel" name="framewDesc">
-       <property name="font">
-        <font>
-         <pointsize>10</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>Frame width (in mm)</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
       <widget class="QLabel" name="sourceDesc">
        <property name="font">
         <font>
@@ -81,58 +46,48 @@
        <property name="text">
         <string>Source</string>
        </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
       </widget>
      </item>
-     <item row="16" column="0" colspan="3">
-      <widget class="QPushButton" name="buttonReset">
+     <item>
+      <widget class="QComboBox" name="sourceCombo">
        <property name="font">
         <font>
          <pointsize>10</pointsize>
         </font>
        </property>
-       <property name="text">
-        <string>Reset</string>
-       </property>
       </widget>
      </item>
-     <item row="12" column="0">
-      <widget class="QPushButton" name="buttonLeft">
+     <item>
+      <widget class="Line" name="line_2">
        <property name="font">
         <font>
          <pointsize>10</pointsize>
         </font>
-       </property>
-       <property name="text">
-        <string>Left</string>
-       </property>
-      </widget>
-     </item>
-     <item row="10" column="0" colspan="3">
-      <widget class="QSlider" name="scalingSlider">
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>30</number>
        </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
-     <item row="17" column="0" colspan="3">
-      <widget class="QPushButton" name="buttonSave">
+     <item>
+      <widget class="QLabel" name="resDesc">
        <property name="font">
         <font>
          <pointsize>10</pointsize>
         </font>
        </property>
        <property name="text">
-        <string>Save</string>
+        <string>Resolution</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
        </property>
       </widget>
      </item>
-     <item row="1" column="1" colspan="2">
+     <item>
       <widget class="QComboBox" name="comboBox">
        <property name="font">
         <font>
@@ -159,90 +114,34 @@
        </item>
       </widget>
      </item>
-     <item row="14" column="0" colspan="3">
+     <item>
       <widget class="Line" name="line">
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="resDesc">
-       <property name="font">
-        <font>
-         <pointsize>9</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>Resolution</string>
-       </property>
-      </widget>
-     </item>
-     <item row="13" column="1">
-      <widget class="QPushButton" name="buttonDown">
+     <item>
+      <widget class="QLabel" name="framewDesc">
        <property name="font">
         <font>
          <pointsize>10</pointsize>
         </font>
        </property>
        <property name="text">
-        <string>Down</string>
+        <string>Frame width (in mm)</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
        </property>
       </widget>
      </item>
-     <item row="15" column="0" colspan="3">
-      <widget class="QPushButton" name="buttonCenter">
-       <property name="font">
-        <font>
-         <pointsize>10</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>Center</string>
-       </property>
-      </widget>
-     </item>
-     <item row="12" column="2">
-      <widget class="QPushButton" name="buttonRight">
-       <property name="font">
-        <font>
-         <pointsize>10</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>Right</string>
-       </property>
-      </widget>
-     </item>
-     <item row="11" column="1">
-      <widget class="QPushButton" name="buttonUp">
-       <property name="font">
-        <font>
-         <pointsize>10</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>Up</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1" colspan="2">
-      <widget class="QComboBox" name="sourceCombo">
-       <property name="font">
-        <font>
-         <pointsize>10</pointsize>
-        </font>
-       </property>
-      </widget>
-     </item>
-     <item row="8" column="0" colspan="3">
-      <widget class="Line" name="line_2">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="0" colspan="3">
+     <item>
       <widget class="QLineEdit" name="widthLine">
        <property name="font">
         <font>
@@ -251,19 +150,7 @@
        </property>
       </widget>
      </item>
-     <item row="9" column="0" colspan="3">
-      <widget class="QLabel" name="scaling">
-       <property name="font">
-        <font>
-         <pointsize>10</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>TextLabel</string>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="0" colspan="3">
+     <item>
       <widget class="QPushButton" name="buttonSet">
        <property name="font">
         <font>
@@ -278,21 +165,195 @@
        </property>
       </widget>
      </item>
-     <item row="7" column="0" colspan="3">
-      <widget class="QComboBox" name="colorCombo"/>
+     <item>
+      <widget class="Line" name="line_3">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="scaling">
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSlider" name="scalingSlider">
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>30</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="1">
+        <widget class="QPushButton" name="buttonUp">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Up</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QPushButton" name="buttonLeft">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Left</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="2">
+        <widget class="QPushButton" name="buttonRight">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Right</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QPushButton" name="buttonDown">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Down</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="Line" name="line_5">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="buttonCenter">
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Center</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="buttonReset">
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Reset</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="buttonSave">
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Save</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="" native="true">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>800</width>
+      <height>600</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLabel" name="videoFrame">
+       <property name="maximumSize">
+        <size>
+         <width>1000</width>
+         <height>650</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Select source to see video displayed here</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
      </item>
     </layout>
    </widget>
    <zorder>layoutWidget</zorder>
    <zorder>videoFrame</zorder>
+   <zorder>scalingSlider</zorder>
+   <zorder>scaling</zorder>
+   <zorder>layoutWidget_2</zorder>
+   <zorder>controls</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1772</width>
-     <height>47</height>
+     <width>1000</width>
+     <height>28</height>
     </rect>
    </property>
   </widget>
@@ -301,15 +362,9 @@
  <tabstops>
   <tabstop>sourceCombo</tabstop>
   <tabstop>comboBox</tabstop>
-  <tabstop>widthLine</tabstop>
   <tabstop>buttonCenter</tabstop>
   <tabstop>buttonSave</tabstop>
   <tabstop>buttonReset</tabstop>
-  <tabstop>buttonUp</tabstop>
-  <tabstop>buttonDown</tabstop>
-  <tabstop>scalingSlider</tabstop>
-  <tabstop>buttonRight</tabstop>
-  <tabstop>buttonLeft</tabstop>
  </tabstops>
  <resources/>
  <connections/>
