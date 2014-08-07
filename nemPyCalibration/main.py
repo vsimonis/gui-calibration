@@ -66,6 +66,7 @@ class Gui(QtWidgets.QMainWindow):
         for s in source:
             self.ui.sourceCombo.addItem(str(s))
 
+
         ## Register button actions
         self.ui.buttonSet.clicked.connect( self.set )
         self.ui.buttonCenter.clicked.connect( self.center )
@@ -97,9 +98,15 @@ class Gui(QtWidgets.QMainWindow):
         #self.indWindow = cv2.namedWindow("Camera Display")
         self.showImage = True
         self.actualRes = self._cap.getResolution()
+        #self.ui.comboBox.setText("%s x %s" % (self.actualRes[0], self.actualRes[1] ))
+        res = "%d x %d" % (int(self.actualRes[0]), int(self.actualRes[1]) )
+        index = self.ui.comboBox.findText(res)
+        self.ui.comboBox.setCurrentIndex(index)
+
         self.p = Point(200,300)
         self.c = Point(self.actualRes[0] // 2, self.actualRes[1] // 2)
         self.setAble('settings', True)
+
     def resolutionSelect ( self ):
         # Get desired resolution from the user: 
         self.idealRes = self.ui.comboBox.currentText().split('x')
@@ -116,6 +123,10 @@ class Gui(QtWidgets.QMainWindow):
         if not ( self.actualRes == self.idealRes ):
             QtWidgets.QMessageBox.information( self, "Resolution",
                                               "That resolution isn't supported by the camera. Instead, your actual resolution is: %d x %d" % (self.actualRes[0], self.actualRes[1] ) )
+            res = "%d x %d" % (int(self.actualRes[0]), int(self.actualRes[1]) )
+            index = self.ui.comboBox.findText(res)
+            self.ui.comboBox.setCurrentIndex(index)
+
 
     def save( self ):
         c = os.path.dirname(os.getcwd())
