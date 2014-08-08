@@ -131,7 +131,7 @@ class Gui(QtWidgets.QMainWindow):
     def save( self ):
         c = os.path.dirname(os.getcwd())
         cc = os.path.dirname(c)
-        f = open( ("%s\\config.txt" % cc) , "w")
+        f = open( ("%s/config.txt" % cc) , "w")
         f.write('%d|%d|%s|%s\n' % ( self.actualRes[0], self.actualRes[1], self.ui.widthLine.text(), self.ui.sourceCombo.currentText() ))
         f.close()
         
@@ -169,7 +169,7 @@ class Gui(QtWidgets.QMainWindow):
 
     def motors( self, direction):
         xdir = 1
-        ydir = 1
+        ydir = -1 #comp up is down
         t = 300
 
         dir ={ 'left': (t, xdir * self.multFactor * (-1), 0 ) ,
@@ -193,7 +193,7 @@ class Gui(QtWidgets.QMainWindow):
         self.ebb.move(300, -self.colSteps, -self.rowSteps)
         if self.ebb.connected:
             self.ebb.closeSerial()
-
+        self.setAble('motors', False)
         self.setAble('settings', True)
 
     def center ( self ):
@@ -249,15 +249,18 @@ class Gui(QtWidgets.QMainWindow):
             self.ebb.closeSerial()
     
     def isColor( self, imgIn ):
-        try:
-            ncolor = np.shape(imgIn)[2]
-            boolt = int(ncolor) > 2
-            return boolt
-        except IndexError:
-            QtWidgets.QMessageBox.information( self, "Camera Issue", "Please Check Camera Source")
-            logger.error("Something wrong with camera input")
-            self.showImage = False
-        
+        s = np.shape(imgIn)
+        if  np.size(s) == 3:
+            try:
+                ncolor = np.shape(imgIn)[2]
+                boolt = int(ncolor) > 2
+                return boolt
+            except IndexError:
+                QtWidgets.QMessageBox.information( self, "Camera Issue", "Please Check Camera Source")
+                logger.error("Something wrong with camera input")
+                self.showImage = False
+        else:
+            return False
          
         
     def play( self ):
@@ -270,33 +273,45 @@ class Gui(QtWidgets.QMainWindow):
             if self.color:
                 try:
                     self.currentFrame = cv2.cvtColor(self.currentFrame, cv2.COLOR_BGR2GRAY)
-                    self.currentFrame = self.p.draw(self.currentFrame, 'gray-1')
-                    self.currentFrame = self.c.draw(self.currentFrame, 'gray-1')
-                    self.ui.videoFrame.setPixmap(self._cap.convertFrame(self.currentFrame))
-                    self.ui.videoFrame.setScaledContents(True)
+                    if self.currentFrame is not None:
+                        self.currentFrame = self.p.draw(self.currentFrame, 'black-1')
+                        self.currentFrame = self.c.draw(self.currentFrame, 'black-1')
+                   
+                        self.ui.videoFrame.setPixmap(self._cap.convertFrame(self.currentFrame))
+                        self.ui.videoFrame.setScaledContents(True)
+                    else:
+                        QtWidgets.QMessageBox.information( self, "Camera Issue", "Please Check Camera Source")
+                        logger.error("Something wrong with camera input")
+                
                     #cv2.imshow( "Camera Display",self.currentFrame)
+                except TypeError:
+                    logger.exception("No Frame")
+                    QtWidgets.QMessageBox.information( self, "Camera Issue", "Please Check Camera Source")
+
+                finally:
+                    self._cap.exitFrame()
+            else:
+                try:
+                    if self.currentFrame is not None:
+                        self.currentFrame = self.p.draw(self.currentFrame, 'black-1')
+                        self.currentFrame = self.c.draw(self.currentFrame, 'black-1')
+                        self.ui.videoFrame.setPixmap(self._cap.convertFrame(self.currentFrame))
+                        self.ui.videoFrame.setScaledContents(True)
+                    else:
+                        QtWidgets.QMessageBox.information( self, "Camera Issue", "Please Check Camera Source")
+                        logger.error("Something wrong with camera input")
+                        logger.exception("No Frame")
+                        self.showImage = False
+
+                        #cv2.imshow( "Camera Display",self.currentFrame)
                 except TypeError:
                     logger.exception("No Frame")
                 finally:
                     self._cap.exitFrame()
+
             self._cap.exitFrame()
         
-    #def keyPressEvent( self, e ):
-        #logger.debug('\tPressed\t%d' % e.key() )
-        
-        #options = {
-        #           QtCore.Qt.Key_Escape : self.close(),
-        #           QtCore.Qt.Key_Left : self.motors( 'left' ),
-        #           QtCore.Qt.Key_Right : self.motors( 'right' ),
-        #           QtCore.Qt.Key_Up : self.motors( 'up' ),
-        #           QtCore.Qt.Key_Down : self.motors( 'down' ) 
-        #       }
-        #logging.debug( str(options[e.key()]) )
-        #options[e.key()]
-        
-        
-
-
+  
 
 
 

@@ -170,15 +170,14 @@ class CaptureManager( object ):
    
     def getProp( self, prop ):
         props = {
-                 'mode': cv2.CAP_PROP_MODE,
-                 'brightness': cv2.CAP_PROP_BRIGHTNESS,
-                 'contrast': cv2.CAP_PROP_CONTRAST,
-                 'saturation': cv2.CAP_PROP_SATURATION,
-                 'hue':cv2.CAP_PROP_HUE,
-                 'gain': cv2.CAP_PROP_GAIN,
-                 'exposure': cv2.CAP_PROP_EXPOSURE,
-                 'height': cv2.CAP_PROP_FRAME_HEIGHT,
-                 'width': cv2.CAP_PROP_FRAME_WIDTH
+      #           'brightness': cv2.cv.CAP_PROP_BRIGHTNESS,
+      #           'contrast': cv2.cv.CAP_PROP_CONTRAST,
+      #           'saturation': cv2.cv.CAP_PROP_SATURATION,
+      #           'hue':cv2.cv.CAP_PROP_HUE,
+      #           'gain': cv2.cvCAP_PROP_GAIN,
+       #          'exposure': cv2.cv.CAP_PROP_EXPOSURE,
+                 'height': cv2.cv.CV_CAP_PROP_FRAME_HEIGHT,
+                 'width': cv2.cv.CV_CAP_PROP_FRAME_WIDTH
                  }
 
         newval = self._capture.get(props[prop])
@@ -190,16 +189,15 @@ class CaptureManager( object ):
 
     def setProp( self, prop, value):
         props = {
-                 'mode': cv2.CAP_PROP_MODE,
-                 'brightness': cv2.CAP_PROP_BRIGHTNESS,
-                 'contrast': cv2.CAP_PROP_CONTRAST,
-                 'saturation': cv2.CAP_PROP_SATURATION,
-                 'hue':cv2.CAP_PROP_HUE,
-                 'gain': cv2.CAP_PROP_GAIN,
-                 'exposure': cv2.CAP_PROP_EXPOSURE,
-                 'height': cv2.CAP_PROP_FRAME_HEIGHT,
-                 'width': cv2.CAP_PROP_FRAME_WIDTH,
-                 'fourcc': cv2.CAP_PROP_FOURCC
+                 #'brightness': cv2.cv.CAP_PROP_BRIGHTNESS,
+                 #'contrast': cv2.cv.CAP_PROP_CONTRAST,
+                 #'saturation': cv2.cv.CAP_PROP_SATURATION,
+                 #'hue':cv2.cv.CAP_PROP_HUE,
+                 #'gain': cv2.cv.CAP_PROP_GAIN,
+                 #'exposure': cv2.cv.CAP_PROP_EXPOSURE,
+                 'height': cv2.cv.CV_CAP_PROP_FRAME_HEIGHT,
+                 'width': cv2.cv.CV_CAP_PROP_FRAME_WIDTH,
+                 #'fourcc': cv2.cv.CAP_PROP_FOURCC
                  }
     
         self._capture.set(props[prop], value)
@@ -207,19 +205,18 @@ class CaptureManager( object ):
         self._capture.get(props[prop])
     
       
-    def debugProps( self ):
-        for prop, name in [(cv2.CAP_PROP_MODE, "Mode"),
-                           (cv2.CAP_PROP_BRIGHTNESS, "Brightness"),
-                           (cv2.CAP_PROP_CONTRAST, "Contrast"),
-                           (cv2.CAP_PROP_SATURATION, "Saturation"),
-                           (cv2.CAP_PROP_HUE, "Hue"),
-                           (cv2.CAP_PROP_GAIN, "Gain"),
-                           (cv2.CAP_PROP_EXPOSURE, "Exposure")]:
-            value = self._capture.get(prop)
-            if value == 0:
-                logc.warn(" - %s not available" % name)
-            else:
-                logc.warn(" - %s = %r" % (name, value))
+    #def debugProps( self ):
+    #    for prop, name in [(cv2.CAP_PROP_BRIGHTNESS, "Brightness"),
+    #                       (cv2.CAP_PROP_CONTRAST, "Contrast"),
+    #                       (cv2.CAP_PROP_SATURATION, "Saturation"),
+    #                       (cv2.CAP_PROP_HUE, "Hue"),
+    #                       (cv2.CAP_PROP_GAIN, "Gain"),
+    #                       (cv2.CAP_PROP_EXPOSURE, "Exposure")]:
+    #        value = self._capture.get(prop)
+    #        if value == 0:
+     #           logc.warn(" - %s not available" % name)
+     #       else:
+     #           logc.warn(" - %s = %r" % (name, value))
 
  
 
