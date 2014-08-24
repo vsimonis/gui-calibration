@@ -77,6 +77,7 @@ class Gui(QtWidgets.QMainWindow):
         self.ui.buttonUp.clicked.connect( partial( self.motors, 'up' ) )
         self.ui.buttonDown.clicked.connect( partial( self.motors, 'down' ) )
         self.ui.scalingSlider.valueChanged[int].connect( self.setMultFactor )
+        self.ui.scalingSlider.setValue(10)
         self.ui.scaling.setText( 'Motor scaling is %d' % self.ui.scalingSlider.value() ) 
         self.ui.sourceCombo.activated[int].connect( self.setSource )
         self.ui.comboBox.activated.connect ( self.resolutionSelect )
@@ -98,10 +99,22 @@ class Gui(QtWidgets.QMainWindow):
         #self.indWindow = cv2.namedWindow("Camera Display")
         self.showImage = True
         self.actualRes = self._cap.getResolution()
-        #self.ui.comboBox.setText("%s x %s" % (self.actualRes[0], self.actualRes[1] ))
-        res = "%d x %d" % (int(self.actualRes[0]), int(self.actualRes[1]) )
-        index = self.ui.comboBox.findText(res)
+
+
+        # Set to default resolution from camera (640x480)
+        #res = "%d x %d" % (int(self.actualRes[0]), int(self.actualRes[1]) )
+        #index = self.ui.comboBox.findText(res) #Sets picker to default resolution
+        #self.ui.comboBox.setCurrentIndex(index)
+
+        # Set to Hoky desired default res (1280x960)
+        res = "%d x %d" % (int(self.idealRes[0]), int(self.idealRes[1]) )
+        index = self.ui.comboBox.findText(res) #Sets picker to default resolution
         self.ui.comboBox.setCurrentIndex(index)
+        self.resolutionSelect()
+        
+
+
+
 
         self.p = Point(200,300)
         self.c = Point(self.actualRes[0] // 2, self.actualRes[1] // 2)
@@ -118,6 +131,7 @@ class Gui(QtWidgets.QMainWindow):
         self._cap.setProp('width', self.idealRes[0])
         self._cap.setProp('height', self.idealRes[1])
         self.actualRes = self._cap.getResolution()
+
         # Something went wrong with resolution assignment -- possible need for shut down if resolution can't even be queried
         self.c = Point(self.actualRes[0] // 2, self.actualRes[1] // 2)
         if not ( self.actualRes == self.idealRes ):
